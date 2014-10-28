@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Computergrafik</title>
+	<script type="text/javascript" src="lib/jquery-1.11.1.js"></script>
+	<script type="text/javascript" src="lib/three.min.js"></script>
+	<script type="text/javascript" src="lib/giocovita.js"></script>
+	<script type="text/javascript" src="lib/visual3d.js"></script>
+
+</head>
+<body>
+	
+	<div id="three_div"></div>
+	<script>
+	'use strict';
+	var board= Object.create(PlayGround, PlayGround_property);
+	var scene3d= Object.create(visualGlob,visualGlob_property);
+	
+	board.initGrid(50);
+
+	board.setSeed();
+	
+	scene3d.preInit(board.N,50);
+	
+	$('#three_div').append(scene3d.renderer.domElement);
+	
+
+	$('#three_div').on('mousedown', function(event) {
+		
+		$('#three_div').on('mousemove', function(event) {
+			scene3d.mouseX = (event.clientX - scene3d.windowHalfX);
+			scene3d.mouseY = (event.clientY - scene3d.windowHalfY);
+		});
+		
+		$('#three_div').on('mouseup', function(event) {
+			$('#three_div').off('mousemove');
+		});
+		
+	});
+   
+	
+	function onWindowResize(){
+		//console.log('2');
+		scene3d.camera.left = window.innerWidth / -2;
+		scene3d.camera.right = window.innerWidth / 2;
+		scene3d.camera.top = window.innerHeight / 2;
+		scene3d.camera.bottom = window.innerHeight / -2;
+
+		scene3d.camera.updateProjectionMatrix();
+
+		scene3d.renderer.setSize(window.innerWidth, window.innerHeight);
+	};
+	window.addEventListener('resize', onWindowResize, false);
+
+	
+	scene3d.buildScene(board,50);
+	
+	function animate(){
+		requestAnimationFrame(animate);
+		scene3d.render(1000,board);
+	};
+	animate();
+	</script>
+</body>
+</html>
